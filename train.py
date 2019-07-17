@@ -16,13 +16,13 @@ tf.app.flags.DEFINE_string('train_dir', 'test',
 FLAGS = tf.app.flags.FLAGS
 def main(_):
     ### define path and hyper-parameter
-    Learning_rate =1e-1
+    Learning_rate =1e-3
 
     batch_size = 128
     val_batch_size = 200
     train_epoch = 100
     
-    weight_decay = 5e-4
+    weight_decay = 1e-4
 
     should_log          = 200
     save_summaries_secs = 20
@@ -64,16 +64,16 @@ def main(_):
                                                     'beta' : tf.contrib.layers.l2_regularizer(weight_decay)},
                                 variables_collections=[tf.GraphKeys.GLOBAL_VARIABLES,'BN_collection']):
                 
-                conv = tf.contrib.layers.conv2d(image, 16, [5,5], 2, scope='conv0', trainable=True)
+                conv = tf.contrib.layers.conv2d(image, 32, [5,5], 2, scope='conv0', trainable=True)
                 conv = tf.contrib.layers.batch_norm(conv, scope='bn0', trainable = True, is_training=is_training_ph)
-                conv = tf.contrib.layers.max_pool2d(conv, [2,2], scope = 'pool0')
-                conv = tf.contrib.layers.conv2d(image, 32, [5,5], 2, scope='conv1', trainable=True)
+                conv = tf.contrib.layers.conv2d(conv,  64, [5,5], 2, scope='conv1', trainable=True)
                 conv = tf.contrib.layers.batch_norm(conv, scope='bn1', trainable = True, is_training=is_training_ph)
+                conv = tf.contrib.layers.conv2d(conv, 128, [5,5], 2, scope='conv2', trainable=True)
+                conv = tf.contrib.layers.batch_norm(conv, scope='bn2', trainable = True, is_training=is_training_ph)
                 
                 fc = tf.contrib.layers.flatten(conv)
                 fc = tf.contrib.layers.fully_connected(fc , 256, biases_initializer = tf.zeros_initializer(),
                                                        trainable=True, scope = 'fc0')
-                fc = tf.contrib.layers.dropout(fc, is_training = is_training_ph)
                 logit = tf.contrib.layers.fully_connected(fc , label.get_shape().as_list()[-1],
                                                        biases_initializer = tf.zeros_initializer(),
                                                        trainable=True, scope = 'fc1')
