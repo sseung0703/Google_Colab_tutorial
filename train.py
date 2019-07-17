@@ -67,8 +67,8 @@ def main(_):
                 conv = tf.contrib.layers.conv2d(image, 16, [5,5], 2, scope='conv0', trainable=True)
                 conv = tf.contrib.layers.batch_norm(conv, scope='bn0', trainable = True, is_training=is_training_ph)
                 conv = tf.contrib.layers.max_pool2d(conv, [2,2], scope = 'pool0')
-                conv = tf.contrib.layers.conv2d(image, 32, [5,5], 2, scope='conv0', trainable=True)
-                conv = tf.contrib.layers.batch_norm(conv, scope='bn0', trainable = True, is_training=is_training_ph)
+                conv = tf.contrib.layers.conv2d(image, 32, [5,5], 2, scope='conv1', trainable=True)
+                conv = tf.contrib.layers.batch_norm(conv, scope='bn1', trainable = True, is_training=is_training_ph)
                 
                 fc = tf.contrib.layers.flatten(conv)
                 fc = tf.contrib.layers.fully_connected(fc , 256, biases_initializer = tf.zeros_initializer(),
@@ -76,7 +76,7 @@ def main(_):
                 fc = tf.contrib.layers.dropout(fc, is_training = is_training_ph)
                 logit = tf.contrib.layers.fully_connected(fc , label.get_shape().as_list()[-1],
                                                        biases_initializer = tf.zeros_initializer(),
-                                                       trainable=True, scope = 'fc0')
+                                                       trainable=True, scope = 'fc1')
                 
                 loss = tf.losses.softmax_cross_entropy(label,logit)
                 accuracy = tf.contrib.metrics.accuracy(tf.to_int32(tf.argmax(logit, 1)), tf.to_int32(tf.argmax(label, 1)))
